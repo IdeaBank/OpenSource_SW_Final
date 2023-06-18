@@ -13,7 +13,7 @@ public:
     BoardData();
     void resetBoard();
     bool isCellEmpty(std::vector<int>, int);
-    std::vector<int> &getBoard();
+    std::vector<int> getBoard();
     std::vector<int> copyBoard();
 
 private:
