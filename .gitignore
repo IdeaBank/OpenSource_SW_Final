@@ -1,4 +1,11 @@
-CMakeCache.txt
-Makefile
+.DS_Store
 
-.code/
+*.cmake
+CMakeCache.txt
+MakeFile
+
+TicTacToe_CPP
+
+CMakeFiles/
+out/
+.vs/
