@@ -17,6 +17,7 @@ private:
     ~BoardView() = default;
 
 public:
+    static BoardView &getInstance();
     void printOnPosition(int, int, std::string, Align);
     int getYPosition(int, std::string, Align);
     void print(std::string);

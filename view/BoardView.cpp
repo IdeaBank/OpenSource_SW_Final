@@ -5,6 +5,13 @@
 #include "../util/headers.h"
 #include "BoardView.h"
 
+BoardView &BoardView::getInstance()
+{
+    static BoardView _instance;
+
+    return _instance;
+}
+
 void BoardView::printOnPosition(int x, int y, std::string str, Align align)
 {
     x = getYPosition(x, str, align);
