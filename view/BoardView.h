@@ -19,7 +19,7 @@ private:
 public:
     static BoardView &getInstance();
     void printOnPosition(int, int, std::string, Align);
-    int getYPosition(int, std::string, Align);
+    int getXPosition(int, std::string, Align);
     void print(std::string);
     void drawBoard(std::vector<int>);
     void drawBoardWithInput(std::vector<int>);
