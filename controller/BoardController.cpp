@@ -5,8 +5,6 @@
 #include "../util/headers.h"
 #include "BoardController.h"
 
-BoardView *temp_view = new BoardView();
-
 PlayMode BoardController::inputPlayMode()
 {
     int input = inputOneDigitBetween(0, 3, ViewType::INPUT_PLAY_MODE);
@@ -46,13 +44,13 @@ int BoardController::inputOneDigitBetween(int from, int to, ViewType viewType)
         switch (viewType)
         {
         case ViewType::INPUT_PLAY_MODE:
-            temp_view->showMainMenu();
+            BoardView::getInstance().showMainMenu();
             break;
         case ViewType::INPUT_ORDER:
-            temp_view->showOrderInput();
+            BoardView::getInstance().showOrderInput();
             break;
         case ViewType::INPUT_BOARD_NUMBER:
-            temp_view->drawBoardWithInput(this->boardData.getBoard());
+            BoardView::getInstance().drawBoardWithInput(this->boardData.getBoard());
             break;
         }
 
@@ -118,7 +116,7 @@ int BoardController::playGame(PlayMode playMode)
 
     while (true)
     {
-        temp_view->drawBoardWithInput(this->boardData.getBoard());
+        BoardView::getInstance().drawBoardWithInput(this->boardData.getBoard());
 
         result = hasGameEnded(this->boardData.getBoard());
 
@@ -136,7 +134,7 @@ int BoardController::playGame(PlayMode playMode)
                     this->gameResult[1][1] += 1;
                 }
 
-                temp_view->printResult(this->boardData.getBoard(), "Draw");
+                BoardView::getInstance().printResult(this->boardData.getBoard(), "Draw");
                 waitInput();
             }
 
@@ -148,7 +146,7 @@ int BoardController::playGame(PlayMode playMode)
                     {
                         this->gameResult[0][0] += 1;
 
-                        temp_view->printResult(this->boardData.getBoard(), "Player won!");
+                        BoardView::getInstance().printResult(this->boardData.getBoard(), "Player won!");
                         waitInput();
                     }
 
@@ -156,7 +154,7 @@ int BoardController::playGame(PlayMode playMode)
                     {
                         this->gameResult[0][2] += 1;
 
-                        temp_view->printResult(this->boardData.getBoard(), "Player lost!");
+                        BoardView::getInstance().printResult(this->boardData.getBoard(), "Player lost!");
                         waitInput();
                     }
                 }
@@ -167,7 +165,7 @@ int BoardController::playGame(PlayMode playMode)
                     {
                         this->gameResult[1][0] += 1;
 
-                        temp_view->printResult(this->boardData.getBoard(), "Player won!");
+                        BoardView::getInstance().printResult(this->boardData.getBoard(), "Player won!");
                         waitInput();
                     }
 
@@ -175,7 +173,7 @@ int BoardController::playGame(PlayMode playMode)
                     {
                         this->gameResult[1][2] += 1;
 
-                        temp_view->printResult(this->boardData.getBoard(), "Player lost!");
+                        BoardView::getInstance().printResult(this->boardData.getBoard(), "Player lost!");
                         waitInput();
                     }
                 }
@@ -212,7 +210,7 @@ int BoardController::playGame(PlayMode playMode)
 
 void BoardController::showScore()
 {
-    temp_view->showScore(this->gameResult);
+    BoardView::getInstance().showScore(this->gameResult);
     waitInput();
 }
 
@@ -259,7 +257,26 @@ int BoardController::hasGameEnded(std::vector<int> board)
 
 int BoardController::calculateBestMove(int botOrder)
 {
+    int bestScore = -1000;
     int bestIndex = -1;
+
+    for (int i = 0; i < 9; ++i)
+    {
+        if (this->boardData.isCellEmpty(this->boardData.getBoard(), i))
+        {
+            std::vector<int> tempBoard = std::vector<int>(boardData.getBoard());
+
+            tempBoard[i] = botOrder;
+
+            int miniMaxResult = miniMax(tempBoard, false, botOrder, 0);
+
+            if (bestScore < miniMaxResult)
+            {
+                bestIndex = i;
+                bestScore = miniMaxResult;
+            }
+        }
+    }
 
     return bestIndex;
 }
