@@ -283,5 +283,69 @@ int BoardController::calculateBestMove(int botOrder)
 
 int BoardController::miniMax(std::vector<int> &board, bool isMaximizing, int botOrder, int depth)
 {
+    int result = hasGameEnded(board);
+
+    if (result == 3)
+    {
+        return 0;
+    }
+
+    else if (result == botOrder)
+    {
+        return 10 - depth;
+    }
+
+    else if (result == botOrder % 2 + 1)
+    {
+        return depth - 10;
+    }
+
+    else if (result == 0)
+    {
+        if (isMaximizing)
+        {
+            int bestScore = -1000;
+
+            for (int i = 0; i < 9; ++i)
+            {
+                if (this->boardData.isCellEmpty(board, i))
+                {
+                    std::vector<int> tempBoard = std::vector<int>(board);
+                    tempBoard[i] = botOrder;
+
+                    int minimaxResult = miniMax(tempBoard, false, botOrder, depth + 1);
+
+                    if (minimaxResult > bestScore)
+                    {
+                        bestScore = minimaxResult;
+                    }
+                }
+            }
+
+            return bestScore;
+        }
+
+        else
+        {
+            int bestScore = 1000;
+
+            for (int i = 0; i < 9; ++i)
+            {
+                if (this->boardData.isCellEmpty(board, i))
+                {
+                    std::vector<int> tempBoard = std::vector<int>(board);
+                    tempBoard[i] = botOrder % 2 + 1;
+
+                    int minimaxResult = miniMax(tempBoard, true, botOrder, depth + 1);
+
+                    if (minimaxResult < bestScore)
+                        bestScore = minimaxResult;
+                }
+            }
+
+            return bestScore;
+        }
+    }
+
     return 0;
 }
