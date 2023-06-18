@@ -2,5 +2,7 @@
 
 int main()
 {
+    BoardController controller;
+    controller.start();
     return 0;
 }
