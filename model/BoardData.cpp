@@ -20,7 +20,7 @@ bool BoardData::isCellEmpty(std::vector<int> board, int index)
     return board[index] == 0;
 }
 
-std::vector<int> BoardData::getBoard()
+std::vector<int> &BoardData::getBoard()
 {
     return this->board;
 }
