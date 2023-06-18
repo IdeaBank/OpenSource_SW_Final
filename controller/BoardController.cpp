@@ -5,6 +5,8 @@
 #include "../util/headers.h"
 #include "BoardController.h"
 
+BoardView *temp_view = new BoardView();
+
 PlayMode BoardController::inputPlayMode()
 {
     int input = inputOneDigitBetween(0, 3, ViewType::INPUT_PLAY_MODE);
@@ -44,13 +46,13 @@ int BoardController::inputOneDigitBetween(int from, int to, ViewType viewType)
         switch (viewType)
         {
         case ViewType::INPUT_PLAY_MODE:
-            BoardView::getInstance().showMainMenu();
+            temp_view->showMainMenu();
             break;
         case ViewType::INPUT_ORDER:
-            BoardView::getInstance().showOrderInput();
+            temp_view->showOrderInput();
             break;
         case ViewType::INPUT_BOARD_NUMBER:
-            BoardView::getInstance().drawBoardWithInput(this->boardData.getBoard());
+            temp_view->drawBoardWithInput(this->boardData.getBoard());
             break;
         }
 
@@ -116,7 +118,7 @@ int BoardController::playGame(PlayMode playMode)
 
     while (true)
     {
-        BoardView::getInstance().drawBoardWithInput(this->boardData.getBoard());
+        temp_view->drawBoardWithInput(this->boardData.getBoard());
 
         result = hasGameEnded(this->boardData.getBoard());
 
@@ -134,7 +136,7 @@ int BoardController::playGame(PlayMode playMode)
                     this->gameResult[1][1] += 1;
                 }
 
-                BoardView::getInstance().printResult(this->boardData.getBoard(), "Draw");
+                temp_view->printResult(this->boardData.getBoard(), "Draw");
                 waitInput();
             }
 
@@ -146,7 +148,7 @@ int BoardController::playGame(PlayMode playMode)
                     {
                         this->gameResult[0][0] += 1;
 
-                        BoardView::getInstance().printResult(this->boardData.getBoard(), "Player won!");
+                        temp_view->printResult(this->boardData.getBoard(), "Player won!");
                         waitInput();
                     }
 
@@ -154,7 +156,7 @@ int BoardController::playGame(PlayMode playMode)
                     {
                         this->gameResult[0][2] += 1;
 
-                        BoardView::getInstance().printResult(this->boardData.getBoard(), "Player lost!");
+                        temp_view->printResult(this->boardData.getBoard(), "Player lost!");
                         waitInput();
                     }
                 }
@@ -165,7 +167,7 @@ int BoardController::playGame(PlayMode playMode)
                     {
                         this->gameResult[1][0] += 1;
 
-                        BoardView::getInstance().printResult(this->boardData.getBoard(), "Player won!");
+                        temp_view->printResult(this->boardData.getBoard(), "Player won!");
                         waitInput();
                     }
 
@@ -173,7 +175,7 @@ int BoardController::playGame(PlayMode playMode)
                     {
                         this->gameResult[1][2] += 1;
 
-                        BoardView::getInstance().printResult(this->boardData.getBoard(), "Player lost!");
+                        temp_view->printResult(this->boardData.getBoard(), "Player lost!");
                         waitInput();
                     }
                 }
@@ -210,7 +212,7 @@ int BoardController::playGame(PlayMode playMode)
 
 void BoardController::showScore()
 {
-    BoardView::getInstance().showScore(this->gameResult);
+    temp_view->showScore(this->gameResult);
     waitInput();
 }
 
@@ -257,95 +259,12 @@ int BoardController::hasGameEnded(std::vector<int> board)
 
 int BoardController::calculateBestMove(int botOrder)
 {
-    int bestScore = -1000;
     int bestIndex = -1;
-
-    for (int i = 0; i < 9; ++i)
-    {
-        if (this->boardData.isCellEmpty(this->boardData.getBoard(), i))
-        {
-            std::vector<int> tempBoard = std::vector<int>(boardData.getBoard());
-
-            tempBoard[i] = botOrder;
-
-            int miniMaxResult = miniMax(tempBoard, false, botOrder, 0);
-
-            if (bestScore < miniMaxResult)
-            {
-                bestIndex = i;
-                bestScore = miniMaxResult;
-            }
-        }
-    }
 
     return bestIndex;
 }
 
 int BoardController::miniMax(std::vector<int> &board, bool isMaximizing, int botOrder, int depth)
 {
-    int result = hasGameEnded(board);
-
-    if (result == 3)
-    {
-        return 0;
-    }
-
-    else if (result == botOrder)
-    {
-        return 10 - depth;
-    }
-
-    else if (result == botOrder % 2 + 1)
-    {
-        return depth - 10;
-    }
-
-    else if (result == 0)
-    {
-        if (isMaximizing)
-        {
-            int bestScore = -1000;
-
-            for (int i = 0; i < 9; ++i)
-            {
-                if (this->boardData.isCellEmpty(board, i))
-                {
-                    std::vector<int> tempBoard = std::vector<int>(board);
-                    tempBoard[i] = botOrder;
-
-                    int minimaxResult = miniMax(tempBoard, false, botOrder, depth + 1);
-
-                    if (minimaxResult > bestScore)
-                    {
-                        bestScore = minimaxResult;
-                    }
-                }
-            }
-
-            return bestScore;
-        }
-
-        else
-        {
-            int bestScore = 1000;
-
-            for (int i = 0; i < 9; ++i)
-            {
-                if (this->boardData.isCellEmpty(board, i))
-                {
-                    std::vector<int> tempBoard = std::vector<int>(board);
-                    tempBoard[i] = botOrder % 2 + 1;
-
-                    int minimaxResult = miniMax(tempBoard, true, botOrder, depth + 1);
-
-                    if (minimaxResult < bestScore)
-                        bestScore = minimaxResult;
-                }
-            }
-
-            return bestScore;
-        }
-    }
-
     return 0;
 }
